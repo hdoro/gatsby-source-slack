@@ -62,7 +62,7 @@ export const processMessages = async ({ actions, graphql, getNode }: any) => {
     const linkWithProtocol = url.split('|')[0];
     const simplifiedLink = url.split('|')[1];
 
-    return `<a href="${linkWithProtocol}" target="_blank" rel="noopener noreferrer">${simplifiedLink ||
+    return `<a href="${linkWithProtocol}" tabindex="-1" target="_blank" rel="noopener noreferrer">${simplifiedLink ||
       linkWithProtocol}</a>`;
   };
 
