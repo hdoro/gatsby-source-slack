@@ -4,6 +4,8 @@ Use your [Slack API](https://api.slack.com) token to download your channels and 
 
 ⚠ **Please note:** This plugin was made out of a specific necessity, so it doesn't cover all of Slack's API capabilities, focusing only on channels and users. If you want to add extra functionalities, feel free to [create a PR](https://github.com/hcavalieri/gatsby-source-slack/pulls) and contribute :smile:
 
+See this plugin in action [here](https://datahackers.com.br/slack)
+
 ## Table of content
 
 - [Basic Usage](#basic-usage)

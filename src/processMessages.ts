@@ -21,15 +21,17 @@ export const processMessages = async ({ actions, graphql, getNode }: any) => {
             channelId
             id
             messages {
-              ts
-              user
               text
+              user
+              ts
+              thread_ts
               reply_count
-              subtype
               files {
                 title
                 filetype
                 thumb_360
+                thumb_360_h
+                thumb_360_w
               }
             }
           }
@@ -88,6 +90,9 @@ export const processMessages = async ({ actions, graphql, getNode }: any) => {
         .replace(userRegex, replaceUser)
         .replace(linkRegex, replaceLink)
         .replace(channelRegex, replaceChannel)
+        .split('\n')
+        .map(p => `<p>${p}</p>`)
+        .join('')
     );
   };
 
