@@ -1,6 +1,6 @@
 {
   "name": "gatsby-source-slack",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "description": "Source plugin to fetch channels from Slack into Gatsby",
   "main": "gatsby-node.js",
   "scripts": {

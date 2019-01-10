@@ -1,4 +1,5 @@
 import { shortnameToUnicode } from 'emojione';
+import { boldString, italicizeString, strikeString } from './helpers';
 
 export const processMessages = async ({ actions, graphql, getNode }: any) => {
   const { createNodeField } = actions;
@@ -52,7 +53,7 @@ export const processMessages = async ({ actions, graphql, getNode }: any) => {
     }
 
     const { display_name, real_name } = user.node;
-    return `<span class="chat_link">@${display_name || real_name}</span>`;
+    return `<span class="chat-link">@${display_name || real_name}</span>`;
   };
 
   // Add an anchor element to referenced links in the text
@@ -69,7 +70,19 @@ export const processMessages = async ({ actions, graphql, getNode }: any) => {
   };
 
   // Add a class around the channel reference
-  const replaceChannel = (c: string) => `<span class="chat_link">${c}</span>`;
+  const replaceChannelReference = (c: string) =>
+    `<span class="chat-link">${c}</span>`;
+
+  // Add a class around the other channel mention
+  const replaceOtherChannel = (l: string) => {
+    // Mentions look like so: <#C024BE7LR|general>
+    // so we remove < and >, and then split at the pipe,
+    // much like the replaceLink function
+    const url = l.replace(/[<>]/gi, '');
+    const channelName = url.split('|')[1];
+
+    return `<span class="chat-link">#${channelName}</span>`;
+  };
 
   const processText = (t: string) => {
     // Emojis come in the form of :emoji:
@@ -78,22 +91,25 @@ export const processMessages = async ({ actions, graphql, getNode }: any) => {
     const userRegex = new RegExp(/<@[\w\d]*>/gi);
     // Links come as <http...>
     const linkRegex = new RegExp(/<http.*>/gi);
-    // And the @channel reference as <!channel>
-    const channelRegex = new RegExp(/<!channel>/gi);
+    // @channel references as <!channel>
+    const channelReferenceRegex = new RegExp(/<!channel>/gi);
+    // And the other channel mentions as <#C024BE7LR|general>
+    const otherChannelRegex = new RegExp(/<#[\w\d]*\|[\w\d]*>/gi);
 
-    return (
-      t
-        .replace(emojiRegex, shortnameToUnicode)
-        // If emoji hasn't been swapped with an unicode char,
-        // that's because it's custom and should be removed
-        .replace(emojiRegex, '')
-        .replace(userRegex, replaceUser)
-        .replace(linkRegex, replaceLink)
-        .replace(channelRegex, replaceChannel)
-        .split('\n')
-        .map(p => `<p>${p}</p>`)
-        .join('')
-    );
+    const initialString = t
+      .replace(emojiRegex, shortnameToUnicode)
+      // If emoji hasn't been swapped with an unicode char,
+      // that's because it's custom and should be removed
+      .replace(emojiRegex, '')
+      .replace(userRegex, replaceUser)
+      .replace(linkRegex, replaceLink)
+      .replace(channelReferenceRegex, replaceChannelReference)
+      .replace(otherChannelRegex, replaceOtherChannel);
+
+    return strikeString(italicizeString(boldString(initialString)))
+      .split('\n')
+      .map(p => `<p>${p}</p>`)
+      .join('');
   };
 
   // We want to keep track of downloaded userImages to avoid them
